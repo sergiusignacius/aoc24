@@ -8,7 +8,7 @@ def parse(input):
 
         return list(map(int, line))
 
-def expand_block_list(block_list, should_print=False):
+def expand_block_list(block_list):
     disk = []
     for filled, free in block_list:
         for id, size in filled:
