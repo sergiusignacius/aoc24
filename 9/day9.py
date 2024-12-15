@@ -8,14 +8,18 @@ def parse(input):
 
         return list(map(int, line))
 
-def expand_block_list(block_list):
+def expand_block_list(block_list, should_print=False):
     disk = []
     for filled, free in block_list:
         for id, size in filled:
             for _ in range(size):
+                if should_print:
+                    print(id, end='')
                 disk.append(id)
         for _ in range(free):
+            print('.', end='')
             disk.append(0)
+    print()
     return disk
 
 def part1(disk):
@@ -55,6 +59,8 @@ def part2(disk):
         else:
             block_list.append(([], d))
 
+    expand_block_list(block_list, should_print=True)
+
     for file in range(block_to_move, 1, -2):
         file_size = disk[file]
         for i, block in enumerate(block_list):
@@ -71,7 +77,7 @@ def part2(disk):
                         block_list[file] = ([], file_size)
                     break
     
-    return expand_block_list(block_list)
+    return expand_block_list(block_list, should_print=True)
 
 def solve(input):
     day_path = '/'.join(__file__.split('/')[:-1])
