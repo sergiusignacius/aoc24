@@ -61,41 +61,39 @@ def is_free(p, boxes, blocked):
 def move_vert(rx, ry, boxes, blocked, delta, part2=False):
     can_move = True
     j = delta
-    if part2:
-        boxes_to_move = set()
-        min_x = rx
-        max_x = rx
+    boxes_to_move = set()
+    min_x = rx
+    max_x = rx
 
-        while len(boxes_at_vert(min_x, max_x, ry + j, boxes)) > 0:
-            nboxes = boxes_at_vert(min_x, max_x, ry + j, boxes)
-            boxes_to_move |= set(nboxes)
+    while len(boxes_at_vert(min_x, max_x, ry + j, boxes)) > 0:
+        nboxes = boxes_at_vert(min_x, max_x, ry + j, boxes)
+        boxes_to_move |= set(nboxes)
+        if part2:
             min_x = min([x for x, _ in nboxes])
             max_x = max([x for x, _ in nboxes]) + 1
-            j += delta
+        j += delta
 
-        if len(boxes_to_move) > 0:
-            can_move = all([box_can_move_v(b, boxes, blocked, delta) for b in boxes_to_move])
-            if can_move:
-                for (bx, by) in boxes_to_move:
-                    boxes.remove((bx, by))
-                for (bx, by) in boxes_to_move:
-                    boxes.add((bx, by + delta))
-        else:
-            can_move = is_free((rx, ry + delta), boxes, blocked)
-        
-        return can_move
-    else:
-        while (rx, ry + j) in boxes:
-            j += delta
-    
-        can_move = (rx, ry + j) not in blocked
-
+    if len(boxes_to_move) > 0:
+        can_move = all([box_can_move_v(b, boxes, blocked, delta) for b in boxes_to_move])
         if can_move:
-            if (rx, ry + delta) in boxes:
-                boxes.remove((rx, ry + delta))
-                boxes.add((rx, ry + j))
+            for (bx, by) in boxes_to_move:
+                boxes.remove((bx, by))
+            for (bx, by) in boxes_to_move:
+                boxes.add((bx, by + delta))
+    else:
+        can_move = is_free((rx, ry + delta), boxes, blocked)
+    
+    return can_move
+    # else:
+    #     while (rx, ry + j) in boxes:
+    #         j += delta
+    
+    #     can_move = (rx, ry + j) not in blocked
 
-        return can_move
+    #     if can_move:
+    #         if (rx, ry + delta) in boxes:
+    #             boxes.remove((rx, ry + delta))
+    #             boxes.add((rx, ry + j))
 
 def move_horz(rx, ry, boxes, blocked, delta, part2=False):
     can_move = True
@@ -133,11 +131,10 @@ deltas = {
     ">": 1
 }
 
-def solve(input):
+def solve(input, part2):
     day_path = '/'.join(__file__.split('/')[:-1])
     day_path = os.path.join(day_path, input)
 
-    part2 = True
     moves, robot, blocked, boxes = parse(day_path)
     rx, ry = robot
     for m in moves:
@@ -150,4 +147,4 @@ def solve(input):
     
     return sum([bx + by * 100 for (bx, by) in boxes])
 
-print(solve("test.txt"))
+print(solve("test.txt", False), solve("test.txt", True))
